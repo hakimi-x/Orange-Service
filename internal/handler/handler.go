@@ -248,13 +248,23 @@ func Download(w http.ResponseWriter, r *http.Request) {
 	cfg := config.Get()
 
 	path := strings.TrimPrefix(r.URL.Path, "/api/v1/download/")
-	parts := strings.SplitN(path, "/", 2)
-	if len(parts) != 2 {
+	parts := strings.Split(path, "/")
+
+	// 支持多种格式:
+	// - /api/v1/download/{version}/{filename}
+	// - /api/v1/download/{brand}/{version}/{invite_code}/{filename}
+	var ver, filename string
+	switch len(parts) {
+	case 2:
+		// 格式: {version}/{filename}
+		ver, filename = parts[0], parts[1]
+	case 4:
+		// 格式: {brand}/{version}/{invite_code}/{filename}
+		ver, filename = parts[1], parts[3]
+	default:
 		httpError(w, http.StatusBadRequest, "无效的下载路径")
 		return
 	}
-
-	ver, filename := parts[0], parts[1]
 
 	if strings.Contains(filename, "..") || strings.Contains(ver, "..") {
 		httpError(w, http.StatusBadRequest, "非法路径")
