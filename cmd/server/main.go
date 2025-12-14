@@ -59,6 +59,7 @@ func main() {
 	http.HandleFunc("/api/v1/check-update", handler.CheckUpdate)
 	http.HandleFunc("/api/v1/version", handler.Version)
 	http.HandleFunc("/api/v1/resources", handler.Resources)
+	http.HandleFunc("/api/v1/resources/", handler.Resources) // 兼容 /api/v1/resources/{brand}/{inviteCode}
 	http.HandleFunc("/api/v1/download/", handler.Download)
 	http.HandleFunc("/api/v1/webhook", handler.Webhook)
 
