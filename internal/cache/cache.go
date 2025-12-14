@@ -83,7 +83,9 @@ func downloadFile(url, dest, token string) error {
 		return err
 	}
 
-	_, err = io.Copy(f, resp.Body)
+	// 使用固定 32KB buffer 避免内存膨胀
+	buf := make([]byte, 32*1024)
+	_, err = io.CopyBuffer(f, resp.Body, buf)
 	f.Close()
 	if err != nil {
 		os.Remove(tmpPath)

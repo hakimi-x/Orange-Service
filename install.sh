@@ -56,6 +56,8 @@ After=network.target
 Type=simple
 WorkingDirectory=$INSTALL_DIR
 ExecStart=$INSTALL_DIR/orange-service
+Environment=GOMEMLIMIT=64MiB
+Environment=GOGC=50
 Restart=always
 RestartSec=5
 
