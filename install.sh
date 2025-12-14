@@ -66,9 +66,17 @@ EOF
 sudo systemctl daemon-reload
 sudo systemctl enable $SERVICE_NAME
 
-echo "✅ Installation complete!"
-echo ""
-echo "Next steps:"
-echo "1. Edit config: sudo nano $INSTALL_DIR/config.yaml"
-echo "2. Start service: sudo systemctl start $SERVICE_NAME"
+# 如果服务已运行则重启
+if systemctl is-active --quiet $SERVICE_NAME; then
+    echo "🔄 Restarting service..."
+    sudo systemctl restart $SERVICE_NAME
+    echo "✅ Update complete!"
+else
+    echo "✅ Installation complete!"
+    echo ""
+    echo "Next steps:"
+    echo "1. Edit config: sudo nano $INSTALL_DIR/config.yaml"
+    echo "2. Start service: sudo systemctl start $SERVICE_NAME"
+fi
+
 echo "3. Check status: sudo systemctl status $SERVICE_NAME"
