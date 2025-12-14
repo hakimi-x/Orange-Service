@@ -1,0 +1,208 @@
+basePath: /
+definitions:
+  handler.ErrorResponse:
+    properties:
+      error:
+        example: 错误信息
+        type: string
+    type: object
+  handler.RootResponse:
+    properties:
+      app:
+        example: update-server
+        type: string
+      version:
+        example: 1.0.0
+        type: string
+    type: object
+  handler.UpdateCheckResponse:
+    properties:
+      download_url:
+        example: https://example.com
+        type: string
+      latest_version:
+        example: v1.2.0
+        type: string
+      release_notes:
+        example: Bug fixes and improvements
+        type: string
+      update_available:
+        example: true
+        type: boolean
+    type: object
+  handler.WebhookResponse:
+    properties:
+      reason:
+        example: not a release event
+        type: string
+      status:
+        example: ok
+        type: string
+      version:
+        example: v1.0.0
+        type: string
+    type: object
+  version.Asset:
+    properties:
+      download_url:
+        type: string
+      name:
+        type: string
+      size:
+        type: integer
+    type: object
+  version.Info:
+    properties:
+      assets:
+        items:
+          $ref: '#/definitions/version.Asset'
+        type: array
+      published_at:
+        type: string
+      release_notes:
+        type: string
+      version:
+        type: string
+    type: object
+host: localhost:8001
+info:
+  contact: {}
+  description: GitHub Release 缓存和更新检查服务
+  title: Update Server API
+  version: "1.0"
+paths:
+  /:
+    get:
+      description: 返回服务名称和版本
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.RootResponse'
+      summary: 获取服务信息
+      tags:
+      - system
+  /api/v1/check-update:
+    get:
+      description: 根据客户端版本号判断是否需要更新
+      parameters:
+      - description: 客户端当前版本号
+        example: '"v1.0.0"'
+        in: query
+        name: version
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.UpdateCheckResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+      summary: 检查客户端是否有新版本
+      tags:
+      - update
+  /api/v1/download/{version}/{filename}:
+    get:
+      description: 从缓存或 GitHub 下载指定版本的文件
+      parameters:
+      - description: 版本号
+        example: '"v1.0.0"'
+        in: path
+        name: version
+        required: true
+        type: string
+      - description: 文件名
+        example: '"app-linux-amd64.tar.gz"'
+        in: path
+        name: filename
+        required: true
+        type: string
+      produces:
+      - application/octet-stream
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: file
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+      summary: 下载指定版本的文件
+      tags:
+      - download
+  /api/v1/version:
+    get:
+      description: 返回最新版本的完整信息，包括版本号、发布说明、资源列表等
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/version.Info'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+      summary: 获取最新版本详情
+      tags:
+      - update
+  /api/v1/webhook:
+    post:
+      consumes:
+      - application/json
+      description: 接收 GitHub release 事件，自动更新版本信息和缓存
+      parameters:
+      - description: GitHub 事件类型
+        example: '"release"'
+        in: header
+        name: X-GitHub-Event
+        required: true
+        type: string
+      - description: GitHub 签名
+        in: header
+        name: X-Hub-Signature-256
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.WebhookResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "405":
+          description: Method Not Allowed
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+      summary: GitHub Webhook 回调
+      tags:
+      - webhook
+swagger: "2.0"

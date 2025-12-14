@@ -1,0 +1,12 @@
+server:
+  port: 8001
+  host: "127.0.0.1"
+  base_url: "https://your-domain.com"
+
+github:
+  token: ""  # GitHub token (可选，用于提高 API 限制)
+  repo: "owner/repo"
+  webhook_secret: ""  # GitHub webhook secret (可选，用于验证签名)
+
+cache:
+  dir: "github_cache"
