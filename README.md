@@ -26,8 +26,10 @@ curl -fsSL https://raw.githubusercontent.com/hakimi-x/Orange-Service/main/instal
 | 接口 | 方法 | 说明 |
 |------|------|------|
 | `/api/v1/check-update?version=v1.0.0` | GET | 检查更新 |
-| `/api/v1/version` | GET | 获取最新版本 |
-| `/api/v1/webhook` | POST | GitHub Webhook |
+| `/api/v1/version` | GET | 获取最新版本详情 |
+| `/api/v1/resources` | GET | 获取按平台分类的构建列表 |
+| `/api/v1/download/{version}/{filename}` | GET | 下载指定版本文件 |
+| `/api/v1/webhook` | POST | GitHub Webhook 回调 |
 
 ## License
 
