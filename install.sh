@@ -20,6 +20,12 @@ echo "📦 Latest version: $LATEST"
 sudo mkdir -p $INSTALL_DIR
 cd $INSTALL_DIR
 
+# 如果服务正在运行，先停止
+if systemctl is-active --quiet $SERVICE_NAME 2>/dev/null; then
+    echo "⏹️ Stopping service..."
+    sudo systemctl stop $SERVICE_NAME
+fi
+
 # 下载
 echo "⬇️ Downloading..."
 sudo curl -L -o orange-service "https://github.com/${REPO}/releases/download/${LATEST}/orange-service-linux-amd64"
