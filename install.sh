@@ -2,7 +2,7 @@
 
 set -e
 
-REPO="hakimi-x/Orange_service"
+REPO="hakimi-x/Orange-Service"
 INSTALL_DIR="/opt/orange-service"
 SERVICE_NAME="orange-service"
 

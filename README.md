@@ -5,7 +5,7 @@ GitHub Release 更新检查服务，为 Orange 客户端提供版本检查和下
 ## 一键安装
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/hakimi-x/Orange_service/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/hakimi-x/Orange-Service/main/install.sh | bash
 ```
 
 ## 功能
