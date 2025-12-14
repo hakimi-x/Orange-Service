@@ -9,10 +9,19 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"sync"
+	"time"
 
 	"update-server/internal/cache"
 	"update-server/internal/config"
 	"update-server/internal/version"
+)
+
+// 防重复处理
+var (
+	lastProcessedTag  string
+	lastProcessedTime time.Time
+	webhookMutex      sync.Mutex
 )
 
 type webhookPayload struct {
@@ -82,6 +91,18 @@ func Webhook(w http.ResponseWriter, r *http.Request) {
 		jsonResponse(w, map[string]string{"status": "ignored", "reason": "action is " + payload.Action})
 		return
 	}
+
+	// 防重复处理：同一 tag 在 60 秒内不重复处理
+	webhookMutex.Lock()
+	if payload.Release.TagName == lastProcessedTag && time.Since(lastProcessedTime) < 60*time.Second {
+		webhookMutex.Unlock()
+		log.Printf("跳过重复 webhook: %s (%.0f秒内已处理)", payload.Release.TagName, time.Since(lastProcessedTime).Seconds())
+		jsonResponse(w, map[string]string{"status": "skipped", "reason": "duplicate request"})
+		return
+	}
+	lastProcessedTag = payload.Release.TagName
+	lastProcessedTime = time.Now()
+	webhookMutex.Unlock()
 
 	log.Printf("收到 release webhook: %s", payload.Release.TagName)
 
