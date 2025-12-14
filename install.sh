@@ -9,7 +9,7 @@ SERVICE_NAME="orange-service"
 echo "🚀 Installing Orange Service..."
 
 # 获取最新版本
-LATEST=$(curl -s "https://api.github.com/repos/${REPO}/releases/latest" | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/\1/')
+LATEST=$(curl -sL "https://api.github.com/repos/${REPO}/releases/latest" | grep '"tag_name"' | sed 's/.*"tag_name": *"\([^"]*\)".*/\1/')
 if [ -z "$LATEST" ]; then
     echo "❌ Failed to get latest version"
     exit 1
