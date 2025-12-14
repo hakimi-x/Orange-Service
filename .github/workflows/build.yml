@@ -22,16 +22,16 @@ jobs:
 
       - name: Build Linux amd64
         run: |
-          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o update-server-linux-amd64 ./cmd/server
+          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o orange-service-linux-amd64 ./cmd/server
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: update-server-linux-amd64
-          path: update-server-linux-amd64
+          name: orange-service-linux-amd64
+          path: orange-service-linux-amd64
 
       - name: Release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
-          files: update-server-linux-amd64
+          files: orange-service-linux-amd64

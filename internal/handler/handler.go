@@ -29,7 +29,7 @@ type ErrorResponse struct {
 
 // RootResponse 根路径响应
 type RootResponse struct {
-	App     string `json:"app" example:"update-server"`
+	App     string `json:"app" example:"orange-service"`
 	Version string `json:"version" example:"1.0.0"`
 }
 
@@ -46,7 +46,7 @@ func Root(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	jsonResponse(w, map[string]any{
-		"app":     "update-server",
+		"app":     "orange-service",
 		"version": "1.0.0",
 	})
 }

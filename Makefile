@@ -1,13 +1,17 @@
 .PHONY: build run test clean dev
 
 # 应用名称
-APP_NAME := update-server
+APP_NAME := orange-service
 # 构建目录
 BUILD_DIR := bin
 
-# 构建
+# 构建 (生产模式，不含 Swagger)
 build:
-	go build -o $(BUILD_DIR)/$(APP_NAME) ./cmd/server
+	go build -ldflags="-s -w" -o $(BUILD_DIR)/$(APP_NAME) ./cmd/server
+
+# 构建 (开发模式，含 Swagger)
+build-dev:
+	go build -tags dev -o $(BUILD_DIR)/$(APP_NAME) ./cmd/server
 
 # 运行
 run: build
@@ -15,7 +19,7 @@ run: build
 
 # 开发模式 (热重载)
 dev:
-	CONFIG_PATH=configs/config.yaml air
+	CONFIG_PATH=configs/config.yaml air -build.cmd "go build -tags dev -o ./tmp/main ./cmd/server"
 
 # 测试
 test:

@@ -22,8 +22,8 @@ cd $INSTALL_DIR
 
 # 下载
 echo "⬇️ Downloading..."
-sudo curl -L -o update-server "https://github.com/${REPO}/releases/download/${LATEST}/update-server-linux-amd64"
-sudo chmod +x update-server
+sudo curl -L -o orange-service "https://github.com/${REPO}/releases/download/${LATEST}/orange-service-linux-amd64"
+sudo chmod +x orange-service
 
 # 创建配置文件
 if [ ! -f config.yaml ]; then
@@ -55,7 +55,7 @@ After=network.target
 [Service]
 Type=simple
 WorkingDirectory=$INSTALL_DIR
-ExecStart=$INSTALL_DIR/update-server
+ExecStart=$INSTALL_DIR/orange-service
 Restart=always
 RestartSec=5
 
