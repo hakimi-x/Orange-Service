@@ -39,10 +39,11 @@ func main() {
 	http.HandleFunc("/api/v1/download/", handler.Download)
 	http.HandleFunc("/api/v1/webhook", handler.Webhook)
 
-	// Swagger UI (仅开发模式)
-	registerSwagger()
-
 	addr := fmt.Sprintf("%s:%d", cfg.Server.Host, cfg.Server.Port)
+
+	// Swagger UI (仅开发模式)
+	registerSwagger(addr)
+
 	log.Printf("服务器启动: http://%s", addr)
 	log.Fatal(http.ListenAndServe(addr, nil))
 }

@@ -11,9 +11,9 @@ import (
 	httpSwagger "github.com/swaggo/http-swagger/v2"
 )
 
-func registerSwagger() {
+func registerSwagger(addr string) {
 	http.Handle("/swagger/", httpSwagger.Handler(
 		httpSwagger.URL("/swagger/doc.json"),
 	))
-	log.Println("Swagger UI 已启用: /swagger/index.html")
+	log.Printf("Swagger UI: http://%s/swagger/index.html", addr)
 }
