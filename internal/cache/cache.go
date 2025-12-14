@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"runtime"
 	"time"
 
 	"update-server/internal/config"
@@ -51,6 +52,9 @@ func Sync() error {
 		}
 
 		log.Printf("  [完成] %s", asset.Name)
+
+		// 每个文件下载后强制 GC 释放内存
+		runtime.GC()
 	}
 
 	log.Printf("版本 %s 同步完成", release.TagName)
