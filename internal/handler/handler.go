@@ -104,6 +104,134 @@ func Version(w http.ResponseWriter, r *http.Request) {
 	jsonResponse(w, info)
 }
 
+// BuildInfo 构建文件信息
+type BuildInfo struct {
+	FileName     string `json:"file_name"`
+	FilePath     string `json:"file_path"`
+	FileURL      string `json:"file_url"`
+	DownloadLink string `json:"download_link"`
+	FileSize     int64  `json:"file_size"`
+	UploadTime   string `json:"upload_time"`
+	FileType     string `json:"file_type"`
+	Architecture string `json:"architecture"`
+}
+
+// ResourcesResponse 资源列表响应
+type ResourcesResponse struct {
+	Status  string                `json:"status"`
+	Version string                `json:"version"`
+	Builds  map[string][]BuildInfo `json:"builds"`
+}
+
+// Resources 获取构建资源列表
+// @Summary 获取构建资源列表
+// @Description 返回按平台分类的构建文件列表
+// @Tags resources
+// @Produce json
+// @Success 200 {object} ResourcesResponse
+// @Failure 503 {object} ErrorResponse
+// @Router /api/v1/resources [get]
+func Resources(w http.ResponseWriter, r *http.Request) {
+	info := version.Get()
+	if info == nil {
+		httpError(w, http.StatusServiceUnavailable, "版本信息暂不可用")
+		return
+	}
+
+	cfg := config.Get()
+	builds := make(map[string][]BuildInfo)
+
+	for _, asset := range info.Assets {
+		platform, fileType, arch := parseAssetName(asset.Name)
+		if platform == "" {
+			continue
+		}
+
+		build := BuildInfo{
+			FileName:     asset.Name,
+			FilePath:     asset.Name,
+			FileURL:      asset.DownloadURL,
+			DownloadLink: fmt.Sprintf("%s/api/v1/download/%s/%s", cfg.Server.BaseURL, info.Version, asset.Name),
+			FileSize:     asset.Size,
+			UploadTime:   info.PublishedAt,
+			FileType:     fileType,
+			Architecture: arch,
+		}
+
+		builds[platform] = append(builds[platform], build)
+	}
+
+	jsonResponse(w, ResourcesResponse{
+		Status:  "success",
+		Version: info.Version,
+		Builds:  builds,
+	})
+}
+
+// parseAssetName 解析文件名，返回平台、文件类型、架构
+func parseAssetName(name string) (platform, fileType, arch string) {
+	nameLower := strings.ToLower(name)
+
+	// 跳过 sha256 校验文件
+	if strings.HasSuffix(nameLower, ".sha256") {
+		return "", "", ""
+	}
+
+	// 判断平台
+	switch {
+	case strings.Contains(nameLower, "android"):
+		platform = "android"
+	case strings.Contains(nameLower, "windows"):
+		platform = "windows"
+	case strings.Contains(nameLower, "macos") || strings.Contains(nameLower, "darwin"):
+		platform = "macos"
+	case strings.Contains(nameLower, "linux"):
+		platform = "linux"
+	case strings.Contains(nameLower, "ios"):
+		platform = "ios"
+	default:
+		return "", "", ""
+	}
+
+	// 判断文件类型
+	switch {
+	case strings.HasSuffix(nameLower, ".apk"):
+		fileType = "apk"
+	case strings.HasSuffix(nameLower, ".exe"):
+		fileType = "exe"
+	case strings.HasSuffix(nameLower, ".dmg"):
+		fileType = "dmg"
+	case strings.HasSuffix(nameLower, ".zip"):
+		fileType = "zip"
+	case strings.HasSuffix(nameLower, ".tar.gz"):
+		fileType = "tar.gz"
+	case strings.HasSuffix(nameLower, ".deb"):
+		fileType = "deb"
+	case strings.HasSuffix(nameLower, ".rpm"):
+		fileType = "rpm"
+	case strings.HasSuffix(nameLower, ".ipa"):
+		fileType = "ipa"
+	default:
+		fileType = "unknown"
+	}
+
+	// 判断架构
+	switch {
+	case strings.Contains(nameLower, "arm64") || strings.Contains(nameLower, "aarch64"):
+		arch = "arm64"
+	case strings.Contains(nameLower, "amd64") || strings.Contains(nameLower, "x86_64") || strings.Contains(nameLower, "x64"):
+		arch = "amd64"
+	case strings.Contains(nameLower, "x86") || strings.Contains(nameLower, "i386") || strings.Contains(nameLower, "i686"):
+		arch = "x86"
+	case strings.Contains(nameLower, "universal"):
+		arch = "universal"
+	default:
+		arch = "unknown"
+	}
+
+	return platform, fileType, arch
+}
+
 // Download 下载文件
 // @Summary 下载指定版本的文件
 // @Description 从缓存或 GitHub 下载指定版本的文件

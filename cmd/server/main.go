@@ -5,12 +5,34 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"update-server/internal/cache"
 	"update-server/internal/config"
 	"update-server/internal/handler"
 	"update-server/internal/version"
 )
+
+// 中间件：日志 + CORS
+func middleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		start := time.Now()
+
+		// CORS headers
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+
+		// 处理预检请求
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
+		next.ServeHTTP(w, r)
+		log.Printf("%s %s %s", r.Method, r.URL.Path, time.Since(start))
+	})
+}
 
 func main() {
 	cfg := config.Load()
@@ -36,6 +58,7 @@ func main() {
 	http.HandleFunc("/", handler.Root)
 	http.HandleFunc("/api/v1/check-update", handler.CheckUpdate)
 	http.HandleFunc("/api/v1/version", handler.Version)
+	http.HandleFunc("/api/v1/resources", handler.Resources)
 	http.HandleFunc("/api/v1/download/", handler.Download)
 	http.HandleFunc("/api/v1/webhook", handler.Webhook)
 
@@ -45,5 +68,5 @@ func main() {
 	registerSwagger(addr)
 
 	log.Printf("服务器启动: http://%s", addr)
-	log.Fatal(http.ListenAndServe(addr, nil))
+	log.Fatal(http.ListenAndServe(addr, middleware(http.DefaultServeMux)))
 }

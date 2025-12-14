@@ -1,23 +1,15 @@
-# Air 热重载配置
 root = "."
 tmp_dir = "tmp"
 
 [build]
-cmd = "go build -o ./tmp/main ./cmd/server"
+cmd = "go build -tags dev -o ./tmp/main ./cmd/server"
 bin = "./tmp/main"
-delay = 1000
-exclude_dir = ["tmp", "bin", "cache", "github_cache"]
-exclude_regex = ["_test.go"]
 include_ext = ["go", "yaml"]
-
-[build.env]
-CONFIG_PATH = "configs/config.yaml"
+exclude_dir = ["bin", "tmp", "github_cache", "docs"]
+delay = 1000
 
 [log]
 time = false
 
-[color]
-main = "magenta"
-watcher = "cyan"
-build = "yellow"
-runner = "green"
+[misc]
+clean_on_exit = true
