@@ -70,12 +70,20 @@ func downloadFile(url, dest, token string) error {
 		req.Header.Set("Authorization", "token "+token)
 	}
 
-	client := &http.Client{Timeout: 30 * time.Minute}
+	// 禁用连接复用，每次下载后释放连接
+	transport := &http.Transport{
+		DisableKeepAlives: true,
+	}
+	client := &http.Client{
+		Timeout:   30 * time.Minute,
+		Transport: transport,
+	}
 	resp, err := client.Do(req)
 	if err != nil {
 		return err
 	}
 	defer resp.Body.Close()
+	defer transport.CloseIdleConnections()
 
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("HTTP %d", resp.StatusCode)
