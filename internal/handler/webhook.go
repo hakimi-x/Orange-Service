@@ -104,7 +104,7 @@ func Webhook(w http.ResponseWriter, r *http.Request) {
 	lastProcessedTime = time.Now()
 	webhookMutex.Unlock()
 
-	log.Printf("收到 release webhook: %s", payload.Release.TagName)
+	log.Printf("收到 release webhook: %s (action: %s)", payload.Release.TagName, payload.Action)
 
 	// 异步更新版本信息和缓存
 	go func() {
