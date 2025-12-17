@@ -32,6 +32,7 @@ curl -fsSL https://raw.githubusercontent.com/hakimi-x/Orange-Service/main/instal
 | `/api/v1/download/{version}/{filename}` | GET | 下载指定版本文件 |
 | `/api/v1/webhook` | POST | GitHub Webhook 回调 |
 | `/api/v1/redirect/domains` | GET | 获取域名配置 (从 GitHub 私有仓库) |
+| `/api/v1/redirect/{brand}` | GET | 品牌重定向 (302 跳转到该品牌第一个面板 URL) |
 
 ## License
 
