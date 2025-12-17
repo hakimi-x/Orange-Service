@@ -10,6 +10,13 @@ import (
 	"update-server/internal/github"
 )
 
+// 构建时注入的版本号
+var (
+	AppVersion   = "dev"
+	BuildTime    = "unknown"
+	GitCommit    = "unknown"
+)
+
 type Asset struct {
 	Name        string `json:"name"`
 	Size        int64  `json:"size"`

@@ -47,7 +47,7 @@ func Root(w http.ResponseWriter, r *http.Request) {
 	}
 	jsonResponse(w, map[string]any{
 		"app":     "orange-service",
-		"version": "1.0.0",
+		"version": version.AppVersion,
 	})
 }
 

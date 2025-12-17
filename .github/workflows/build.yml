@@ -22,7 +22,12 @@ jobs:
 
       - name: Build Linux amd64
         run: |
-          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o orange-service-linux-amd64 ./cmd/server
+          VERSION=${GITHUB_REF_NAME:-dev}
+          BUILD_TIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          GIT_COMMIT=${GITHUB_SHA::8}
+          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build \
+            -ldflags="-s -w -X update-server/internal/version.AppVersion=${VERSION} -X update-server/internal/version.BuildTime=${BUILD_TIME} -X update-server/internal/version.GitCommit=${GIT_COMMIT}" \
+            -o orange-service-linux-amd64 ./cmd/server
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
