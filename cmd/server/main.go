@@ -62,6 +62,7 @@ func main() {
 	http.HandleFunc("/api/v1/resources/", handler.Resources) // 兼容 /api/v1/resources/{brand}/{inviteCode}
 	http.HandleFunc("/api/v1/download/", handler.Download)
 	http.HandleFunc("/api/v1/webhook", handler.Webhook)
+	http.HandleFunc("/api/v1/redirect/domains", handler.Domains)
 
 	addr := fmt.Sprintf("%s:%d", cfg.Server.Host, cfg.Server.Port)
 
