@@ -49,7 +49,7 @@ deps:
 
 # 生成 Swagger 文档
 swagger:
-	swag init
+	swag init -g cmd/server/main.go
 
 # 安装开发工具
 tools:
