@@ -22,7 +22,7 @@ func Sync() error {
 	}
 
 	cfg := config.Get()
-	cacheDir := filepath.Join(cfg.Cache.Dir, release.TagName)
+	cacheDir := filepath.Join(cfg.CacheDir, release.TagName)
 
 	if err := os.MkdirAll(cacheDir, 0755); err != nil {
 		return fmt.Errorf("创建缓存目录失败: %w", err)
@@ -44,9 +44,9 @@ func Sync() error {
 		log.Printf("  [下载] %s (%d MB)", asset.Name, asset.Size/1024/1024)
 
 		downloadURL := fmt.Sprintf("https://github.com/%s/releases/download/%s/%s",
-			cfg.GitHub.Repo, release.TagName, asset.Name)
+			cfg.Release.Repo, release.TagName, asset.Name)
 
-		if err := downloadFile(downloadURL, cachePath, cfg.GitHub.Token); err != nil {
+		if err := downloadFile(downloadURL, cachePath, cfg.Release.Token); err != nil {
 			log.Printf("  [失败] %s: %v", asset.Name, err)
 			continue
 		}

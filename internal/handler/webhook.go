@@ -65,9 +65,9 @@ func Webhook(w http.ResponseWriter, r *http.Request) {
 
 	// 验证签名 (如果配置了 secret)
 	cfg := config.Get()
-	if cfg.GitHub.WebhookSecret != "" {
+	if cfg.Release.WebhookSecret != "" {
 		signature := r.Header.Get("X-Hub-Signature-256")
-		if !verifySignature(body, signature, cfg.GitHub.WebhookSecret) {
+		if !verifySignature(body, signature, cfg.Release.WebhookSecret) {
 			httpError(w, http.StatusUnauthorized, "签名验证失败")
 			return
 		}

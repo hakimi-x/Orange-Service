@@ -27,7 +27,7 @@ func main() {
 	cfg := config.Load()
 
 	// 初始化缓存目录
-	if err := os.MkdirAll(cfg.Cache.Dir, 0755); err != nil {
+	if err := os.MkdirAll(cfg.CacheDir, 0755); err != nil {
 		log.Fatalf("创建缓存目录失败: %v", err)
 	}
 
@@ -52,6 +52,7 @@ func main() {
 	http.HandleFunc("/api/v1/version", handler.Version)
 	http.HandleFunc("/api/v1/download/", handler.Download)
 	http.HandleFunc("/api/v1/webhook", handler.Webhook)
+	http.HandleFunc("/api/v1/redirect/domains", handler.Domains)
 
 	// Swagger UI
 	http.Handle("/swagger/", httpSwagger.Handler(

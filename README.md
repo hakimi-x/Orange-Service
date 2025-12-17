@@ -13,6 +13,7 @@ curl -fsSL https://raw.githubusercontent.com/hakimi-x/Orange-Service/main/instal
 - 检查客户端更新
 - 缓存 GitHub Release 资源
 - Webhook 回调自动刷新版本
+- 域名配置代理 (从私有 GitHub 仓库获取)
 
 ## 手动安装
 
@@ -30,6 +31,7 @@ curl -fsSL https://raw.githubusercontent.com/hakimi-x/Orange-Service/main/instal
 | `/api/v1/resources` | GET | 获取按平台分类的构建列表 |
 | `/api/v1/download/{version}/{filename}` | GET | 下载指定版本文件 |
 | `/api/v1/webhook` | POST | GitHub Webhook 回调 |
+| `/api/v1/redirect/domains` | GET | 获取域名配置 (从 GitHub 私有仓库) |
 
 ## License
 

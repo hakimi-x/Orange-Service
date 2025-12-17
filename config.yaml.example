@@ -3,10 +3,13 @@ server:
   host: "127.0.0.1"
   base_url: "https://your-domain.com"
 
-github:
-  token: ""  # GitHub token (可选，用于提高 API 限制)
-  repo: "owner/repo"
-  webhook_secret: ""  # GitHub webhook secret (可选，用于验证签名)
+# 构建/发布仓库 (公开仓库，用于 check-update/download/webhook)
+release:
+  repo: "owner/repo"              # GitHub 仓库地址
+  token: ""                       # 访问令牌 (公开仓库可留空)
+  webhook_secret: ""              # Webhook 签名密钥
 
-cache:
-  dir: "github_cache"
+# 域名配置仓库 (私有仓库，用于 redirect/domains)
+domains:
+  repo: "owner/domains-repo"      # GitHub 仓库地址
+  token: ""                       # 访问令牌 (私有仓库必填)

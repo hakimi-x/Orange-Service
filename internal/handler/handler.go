@@ -271,7 +271,7 @@ func Download(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cachePath := filepath.Join(cfg.Cache.Dir, ver, filename)
+	cachePath := filepath.Join(cfg.CacheDir, ver, filename)
 	if _, err := os.Stat(cachePath); err == nil {
 		w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=%s", filename))
 		http.ServeFile(w, r, cachePath)
@@ -298,9 +298,9 @@ func Download(w http.ResponseWriter, r *http.Request) {
 	}
 
 	downloadURL := fmt.Sprintf("https://github.com/%s/releases/download/%s/%s",
-		cfg.GitHub.Repo, ver, filename)
+		cfg.Release.Repo, ver, filename)
 
-	if err := downloadAndCache(downloadURL, cachePath, cfg.GitHub.Token); err != nil {
+	if err := downloadAndCache(downloadURL, cachePath, cfg.Release.Token); err != nil {
 		httpError(w, http.StatusInternalServerError, "下载文件失败")
 		return
 	}

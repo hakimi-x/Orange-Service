@@ -158,7 +158,7 @@ func TestDownload_FromCache(t *testing.T) {
 	cfg := config.Get()
 
 	// 创建缓存文件
-	cacheDir := filepath.Join(cfg.Cache.Dir, "v1.0.0")
+	cacheDir := filepath.Join(cfg.CacheDir, "v1.0.0")
 	if err := os.MkdirAll(cacheDir, 0755); err != nil {
 		t.Fatal(err)
 	}

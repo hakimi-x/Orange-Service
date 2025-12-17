@@ -38,7 +38,7 @@ func main() {
 	cfg := config.Load()
 
 	// 初始化缓存目录
-	if err := os.MkdirAll(cfg.Cache.Dir, 0755); err != nil {
+	if err := os.MkdirAll(cfg.CacheDir, 0755); err != nil {
 		log.Fatalf("创建缓存目录失败: %v", err)
 	}
 

@@ -24,7 +24,7 @@ type Release struct {
 
 func FetchLatestRelease() (*Release, error) {
 	cfg := config.Get()
-	url := fmt.Sprintf("https://api.github.com/repos/%s/releases/latest", cfg.GitHub.Repo)
+	url := fmt.Sprintf("https://api.github.com/repos/%s/releases/latest", cfg.Release.Repo)
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -32,8 +32,8 @@ func FetchLatestRelease() (*Release, error) {
 	}
 
 	req.Header.Set("Accept", "application/vnd.github.v3+json")
-	if cfg.GitHub.Token != "" {
-		req.Header.Set("Authorization", "token "+cfg.GitHub.Token)
+	if cfg.Release.Token != "" {
+		req.Header.Set("Authorization", "token "+cfg.Release.Token)
 	}
 
 	client := &http.Client{Timeout: 30 * time.Second}
