@@ -63,6 +63,7 @@ func main() {
 	http.HandleFunc("/api/v1/download/", handler.Download)
 	http.HandleFunc("/api/v1/webhook", handler.Webhook)
 	http.HandleFunc("/api/v1/redirect/domains", handler.Domains)
+	http.HandleFunc("/api/v1/redirect/", handler.RedirectBrand)
 
 	addr := fmt.Sprintf("%s:%d", cfg.Server.Host, cfg.Server.Port)
 
